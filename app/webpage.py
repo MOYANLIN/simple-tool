@@ -25,6 +25,7 @@ def mainpage():
         # submit an empty part without filename
         if file.filename == '':
             return redirect(request.url)
+        # scan the code if file type right
         if file and allowed_file(file.filename):
             filename = file.filename
             file.save(app.config['UPLOAD_FOLDER']+'/'+filename)
@@ -38,9 +39,6 @@ def mainpage():
             comment_lines = single_line + multi_lines
             block_line_comment = c.block_line_comment
             todo = c.todo
-            # return redirect(url_for("mainpage",total_lines=total_lines, comment_lines=comment_lines,\
-            #                         single_line=single_line, multi_lines=multi_lines,\
-            #                         block_line_comment=block_line_comment, todo=todo))
             return render_template("webpage.html", total_lines=total_lines, comment_lines=comment_lines,\
                                      single_line=single_line, multi_lines=multi_lines,\
                                      block_line_comment=block_line_comment, todo=todo)
