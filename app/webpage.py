@@ -17,15 +17,15 @@ def allowed_file(filename):
 @app.route('/',methods=["GET","POST"])
 def mainpage():
     if request.method=='POST':
-        # check if the post request has the file part
+        # handle the case if the post requests don't have the file part
         if 'file' not in request.files:
             return redirect(request.url)
         file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
+        # handle the case if user does not select file, browser also
+        # submit an empty file without filename
         if file.filename == '':
             return redirect(request.url)
-        # scan the code if file type right
+        # scan the code if file type in allowed file
         if file and allowed_file(file.filename):
             filename = file.filename
             file.save(app.config['UPLOAD_FOLDER']+'/'+filename)
@@ -39,6 +39,7 @@ def mainpage():
             comment_lines = single_line + multi_lines
             block_line_comment = c.block_line_comment
             todo = c.todo
+            #re-render the template
             return render_template("webpage.html", total_lines=total_lines, comment_lines=comment_lines,\
                                      single_line=single_line, multi_lines=multi_lines,\
                                      block_line_comment=block_line_comment, todo=todo)
