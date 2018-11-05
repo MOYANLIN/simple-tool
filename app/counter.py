@@ -89,32 +89,40 @@ class LineCalculator:
             i += 1
 
 # calculate python file comments
-    def get_py(self):
+        def get_py(self):
         self.total_lines = len(self.text.split('\n'))
+        lines=re.sub(r"\'\'\'(.+?)\'\'\'", "3single", self.text)
+        lines=re.sub(r"\"\"\"(.+?)\"\"\"", "3double", lines)
+        lines=re.sub(r"\'([^'^\n]+?)\'", "1single", lines)
+        lines=re.sub(r"\"([^\"^\n]+?)\"", "1double", lines)
+        lines=re.sub(r"\'\'\'(.+?)\'\'\'", "3single-m", lines, flags=re.S)
+        lines=re.sub(r"\"\"\"(.+?)\"\"\"", "3double-m", lines, flags=re.S)
+        print(lines)
+        lines=lines.split('\n')
         i = 0
-        lines = re.sub(r"\'\'\'.*?\'\'\'", " ", self.text, flags=re.S).split('\n')  #replace all the string within '''''' with space
         while i < len(lines):
-            if i<len(lines):
-                line = re.sub(r"\'.*?\'", " ", lines[i])  # replace all the string within "" or '' with space
-                line = re.sub(r"\".*?\"", " ", line)
-
-                if re.search(r"#(\s*)todo", line, flags=re.I):   # only the comment starts with "todo" will be regarded as todo
-                    self.todo += 1
-                if lines[i].lstrip().startswith("#"):
-                    count = 1
-                    i += 1
-                    while lines[i].lstrip().startswith("#"):
-                        count += 1
-                        i += 1
-                    if count > 1:
-                        self.multi_lines += count
-                        self.block_line_comment += 1
-                    else:
-                        self.single_line += 1
-                else:
-                    if line.find("#") != -1:
-                        self.single_line += 1
+            line=lines[i]
+            if re.search(r"#(\s*)todo", line, flags=re.I):   # only the comment starts with "todo" will be regarded as todo
+                self.todo += 1
+            if lines[i].lstrip().startswith("#"):
+                # print("mul" + lines[i])
+                count = 1
                 i += 1
+                while lines[i].lstrip().startswith("#"):
+                    # print("mul" + lines[i])
+                    count += 1
+                    i += 1
+                if count > 1:
+                    self.multi_lines += count
+                    self.block_line_comment += 1
+                else:
+                    # print(line)
+                    self.single_line += 1
+            else:
+                if line.find("#") != -1:
+                    # print(line)
+                    self.single_line += 1
+            i += 1
 
     def print_result(self):
         print("Total # of lines: "+str(self.total_lines))
